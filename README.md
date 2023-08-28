@@ -1,2 +1,5 @@
 # Proyecto_G4
 Entregas del proyecto de Estructuras de datos
+
+
+EN ESTA ENTREGA SE ENCUENTRA EL CODIGO DEL PROYECTO CON LAS FUNCIONALIDADES DEL COMPONENTE 1
