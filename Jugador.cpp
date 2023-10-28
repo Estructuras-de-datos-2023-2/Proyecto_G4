@@ -1,144 +1,173 @@
-// Definición de la clase Jugador
-
 #include "Jugador.h"
 
-//Definir códigos de colores para la salida en consola
+Jugador::Jugador(){}
 
-#define AMARILLO     "\033[33m"
-#define BLANCO       "\033[37m"
-#define AZUL_OSCURO  "\033[34m"
-
-using namespace std;
-
-Jugador::Jugador(string n, string c, int i, int a, int ca)
+Jugador::Jugador(string n, string c, vector<Ejercito> t)
 {
-    this->nombre = n; // Nombre del jugador
-    this->color = c; // Color del jugador
-    this->infanteria = i; // Cantidad de unidades de infantería
-    this->artilleria = a; // Cantidad de unidades de artillería
-    this->caballeria = ca; // Cantidad de unidades de caballería
+    this->nombre = n;
+    this->color = c;
+    this->tropas = t;
 }
 
-Jugador::Jugador(string n, string c, int i)
+void Jugador::agregarTerritorio(Pais p)
 {
-    this->nombre = n; // Nombre del jugador
-    this->color = c; // Color del jugador
-    this->infanteria = i; // Cantidad de unidades de infantería
-}
-
-void Jugador::agregarTerritorio(string t)
-{
-    this->territorios.push_back(t); // Agrega un territorio a la lista de territorios del jugador
+    this->territorios.push_back(p);
 }
 
 int Jugador::contarTerritorios()
 {
-    return this->territorios.size(); // Devuelve la cantidad de territorios que posee el jugador
+    return this->territorios.size();
 }
 
 void Jugador::eliminarTerritorio(string terr)
 {
-    for(int i=0; i<territorios.size(); i++)
-    {
-        if(terr == territorios[i]) // Elimina un territorio de la lista de territorios del jugador
-            territorios.erase(territorios.begin() + i);
+    for(auto it = territorios.begin(); it != territorios.end(); ++it){
+        if(terr == it->getNombre())
+            territorios.erase(it);
     }
 }
 
 void Jugador::mostrarTerritorios()
 {
-    cout<<endl<< AMARILLO <<"Territorios del jugador "<<this->nombre<<":"<<endl;
-    for(string &t : this->territorios)
-    {
-        cout<<endl<<t; // Muestra los territorios que posee el jugador
+    cout<<endl<<"Territorios del jugador "<<this->nombre<<":"<<endl;
+    for(auto it = territorios.begin(); it != territorios.end(); ++it){
+        cout << endl << it->getNumero() << ". " << it->getNombre();
     }
     cout<<endl;
 }
 
-vector<string> Jugador:: getTerritorios()
+vector<Pais> Jugador:: getTerritorios()
 {
-    return territorios;  // Devuelve la lista de territorios del jugador
+    return territorios;
 }
 
-void Jugador:: setTerritorios(vector<string> territorios)
+void Jugador:: setTerritorios(vector<Pais> territorios)
 {
-    this->territorios = territorios; // Establece la lista de territorios del jugador
+    this->territorios = territorios;
 }
 
-string Jugador::buscarTerritorio(string t)
+int Jugador::buscarTerritorio(int t)
 {
-    for(int i=0; i<territorios.size(); i++)
-    {
-        if(t == territorios[i]) 
-            return territorios[i]; // Busca un territorio en la lista y lo devuelve si lo encuentra
+    for(auto it = territorios.begin(); it != territorios.end(); ++it){
+        if(t == it->getNumero())
+            return it->getNumero();
     }
-    return "error"; // Devuelve "error" si no encuentra el territorio
+    return -1;
+}
+
+void Jugador::agregarTarjeta(Tarjeta tarjeta)
+{
+    this->tarjetas.push_back(tarjeta);
+}
+
+void Jugador::eliminarTarjetas(string eliminar)
+{
+    bool inf = false;
+    bool art = false;
+    bool cab = false;
+    if(eliminar == "Todos"){
+        for(auto it = this->tarjetas.begin(); it != this->tarjetas.end(); ++it){
+            if(it->getEjercito() == "Infanteria" && !inf){
+                inf = true;
+                this->tarjetas.erase(it);
+            } 
+            else if(it->getEjercito() == "Caballeria" && !inf){
+                cab = true;
+                this->tarjetas.erase(it);
+            } 
+            else if(it->getEjercito() == "Artilleria" && !inf){
+                art = true;
+                this->tarjetas.erase(it);
+            }  
+        }
+    }
+    else{
+        int n = 0;
+        for(auto it = this->tarjetas.begin(); n < 3; ++it){
+            if(eliminar == it->getEjercito()){
+                this->tarjetas.erase(it);
+                n++;
+            }
+        }
+    }
 }
 
 string Jugador::getNombre()
 {
-    return this->nombre; // Devuelve el nombre del jugador
+    return this->nombre;
 }
 
 void Jugador::setNombre(string nombre)
 {
-    this->nombre = nombre; // Establece el nombre del jugador
+    this->nombre = nombre;
 }
 
 string Jugador::getColor()
 {
-    return color; // Devuelve el color del jugador
+    return color;
 }
 
 void Jugador::setColor(string color)
 {
-    this->color = color; // Establece el color del jugador
+    this->color = color;
 }
 
 void Jugador::restarInfanteria(int n)
 {
-    this->infanteria -= n; // Resta unidades de infantería al jugador
+    this->tropas[0].modificarCantidad(n, '-');
 }
 
 void Jugador::sumarInfanteria(int n)
 {
-    this->infanteria += n; // Suma unidades de infantería al jugador
+    this->tropas[0].modificarCantidad(n, '+');
 }
 
 int Jugador::getInfanteria()
 {
-    return infanteria; // Devuelve la cantidad de unidades de infantería del jugador
+    return this->tropas[0].getCantidad();
 }
 
 void Jugador::setInfanteria(int infanteria)
 {
-    this->infanteria = infanteria; // Establece la cantidad de unidades de infantería del jugador
+    this->tropas[0].setCantidad(infanteria);
 }
 
 int Jugador::getArtilleria()
 {
-    return artilleria; // Devuelve la cantidad de unidades de artillería del jugador
+    return this->tropas[2].getCantidad();
 }
 
 void Jugador::setArtilleria(int artilleria)
 {
-    this->artilleria = artilleria; // Establece la cantidad de unidades de artillería del jugador
+    this->tropas[2].setCantidad(artilleria);
 }
 
 int Jugador::getCaballeria()
 {
-    return caballeria; // Devuelve la cantidad de unidades de caballería del jugador
+    return this->tropas[1].getCantidad();
 }
 
 void Jugador::setCaballeria(int caballeria)
 {
-    this->caballeria = caballeria; // Establece la cantidad de unidades de caballería del jugador
+    this->tropas[1].getCantidad();
 }
 
-void Jugador::ToTerritorios()
+vector<Ejercito> Jugador::getEjercitos()
 {
-    for(int i=0; i<territorios.size(); i++)
-    {
-        cout<<endl<<i+1<<". "<<territorios[i]; // Muestra los territorios del jugador con números
-    }
+    return this->tropas;
+}
+
+void Jugador::setEjercitos(vector <Ejercito> ejercitos)
+{
+    this->tropas = ejercitos;
+}
+
+vector<Tarjeta> Jugador::getTarjetas()
+{
+    return this->tarjetas;
+}
+
+void Jugador::setTarjetas(vector <Tarjeta> tarjetas)
+{
+    this->tarjetas = tarjetas;
 }

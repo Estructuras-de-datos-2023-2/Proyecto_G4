@@ -1,40 +1,24 @@
-// Definición de la clase Continente
-
 #include "Continente.h"
-
-//Definir códigos de colores para la salida en consola
-
-#define AMARILLO     "\033[33m"
-#define BLANCO       "\033[37m"
-#define AZUL_OSCURO  "\033[34m"
-
-// Constructor por defecto
 
 Continente::Continente()
 {
 
 }
 
-// Agrega un país a la lista de países del continente
-
 void Continente::agregarPais(Pais p)
 {
     this->paises.push_back(p);
 }
 
-// Busca un país por número y devuelve su nombre
-
-string Continente::buscarPais(int t)
+Pais Continente::buscarPais(int t)
 {
     for(Pais p : this->paises)
     {
         if(t == p.getNumero())
-            return p.getNombre();
+            return p;
     }
-    return "error";
+    return Pais();
 }
-
-// Verifica si un territorio pertenece a un jugador específico
 
 bool Continente::verificarTerritorio(int n, string jugador)
 {
@@ -42,21 +26,6 @@ bool Continente::verificarTerritorio(int n, string jugador)
         return true;
     return false;
 }
-
-// Obtiene una lista de países disponibles (sin propietario)
-
-vector<Pais> Continente::obtenerDisponibles()
-{
-    vector <Pais> disponibles;
-    for(Pais p : this->paises)
-    {
-        if(p.getPropietario() == "libre")
-            disponibles.push_back(p);
-    }
-    return disponibles;
-}
-
-// Borra un país de la lista de países
 
 vector <Pais> Continente::borrarPais(int pais)
 {
@@ -68,40 +37,32 @@ vector <Pais> Continente::borrarPais(int pais)
     return paises;
 }
 
-// Cambia el propietario de un país en el continente
-
 void Continente::cambiarPropietario(int n, string nom)
 {
+    cout << endl << "Nuevo propietario de " <<  paises[n].getNombre() << ": ";
     this->paises[n].setPropietario(nom);
+    cout << paises[n].getPropietario() << endl;
 }
-
-// Muestra los países en el continente
 
 void Continente::mostrarPaises()
 {
     cout<<endl<<this->nombre<<endl;
-    cout<<endl<< AMARILLO <<"0. volver a continentes"<<endl;
+    cout<<endl<<"0. volver a continentes"<<endl;
     for(Pais p : paises)
     {
         cout<<endl<<p.getNumero()<<". "<<p.getNombre()<<endl<<p.getPropietario()<<endl;
     }
 }
 
-// Obtiene el propietario de un país en el continente
-
 string Continente::obtenerPropietario(int n)
 {
     return this->paises[n].getPropietario();
 }
 
-// Muestra los países vecinos de un país en el continente
-
-void Continente::mostrarVecinos(int n)
+vector <string> Continente::mostrarVecinos(int n)
 {
-    this->paises[n].mostrarPaisesVecinos();
+    return this->paises[n].mostrarPaisesVecinos();
 }
-
-// Verifica si un jugador controla todo el continente
 
 string Continente::verificarContinente(string nombre)
 {
@@ -114,8 +75,6 @@ string Continente::verificarContinente(string nombre)
     else
         return "nada";
 }
-
-// Verifica si todos los países en el continente tienen propietario
 
 bool Continente::verificarPaises()
 {
@@ -130,16 +89,12 @@ bool Continente::verificarPaises()
     return false;
 }
 
-// Marca un país como ocupado por un jugador
-
 void Continente::marcarOcupado(int n, string nombre)
 {
     this->paises[n-1].setPropietario(nombre);
     this->paises[n-1].setTropas(1);
     this->contador++;
 }
-
-// Verifica si un país está ocupado
 
 bool Continente::paisOcupado(int numero)
 {
@@ -148,21 +103,26 @@ bool Continente::paisOcupado(int numero)
     return false;
 }
 
-// Suma tropas a un país en el continente
+Tarjeta Continente::buscarTarjeta(int n)
+{
+    return this->paises[n].getTarjeta();
+}
 
 void Continente::sumarTropas(int p, int trop)
 {
     this->paises[p].sumarTropas(trop);
 }
 
-// Resta tropas a un país en el continente
-
 void Continente::restarTropas(int p, int trop)
 {
     this->paises[p].restarTropas(trop);
 }
 
-// Métodos Getters y Setters
+void Continente::setTropas(int p, int trop)
+{
+    this->paises[p].setTropas(trop);
+}
+//GETTERS Y SETTERS
 
 int Continente::getTropas(int n)
 {
@@ -219,7 +179,7 @@ int Continente::getContador()
     return this->contador;
 }
 
-// Método toString para representación en cadena
+//toString
 
 string Continente::toString()
 {
