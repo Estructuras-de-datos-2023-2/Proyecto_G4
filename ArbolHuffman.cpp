@@ -2,7 +2,6 @@
 #include "ComparadorNodos.h"
 #include <iostream>
 #include <sstream>
-
 #include <queue>
 
 NodoHuffman* ArbolHuffman::construirArbol(const std::unordered_map<char, int>& mapaFrecuencia) {
@@ -64,15 +63,9 @@ void ArbolHuffman::codificarMensajeAux(NodoHuffman* nodo, std::string codigo, st
 std::stringstream mensajeDecodificado;
 
 std::string ArbolHuffman::decodificarMensaje(NodoHuffman* raiz, const std::string& mensaje) {
-
-    std::string mensajeDecodificado;
-    mensajeDecodificado += decodificarMensajeAux(raiz, mensaje);
-    return mensajeDecodificado;
-}
-
-char ArbolHuffman::decodificarMensajeAux(NodoHuffman* raiz, const std::string& mensaje) {
     NodoHuffman* nodoActual = raiz;
     
+    std::string decodificado = "";
   
     for (char bit : mensaje) {
         if (bit == '0') {
@@ -83,16 +76,37 @@ char ArbolHuffman::decodificarMensajeAux(NodoHuffman* raiz, const std::string& m
 
         // Solo imprimir si es un nodo hoja
         if (nodoActual->izquierda == nullptr && nodoActual->derecha == nullptr) {
-            std::cout << nodoActual->dato;
+            decodificado += nodoActual->dato;
             nodoActual = raiz;  // Reiniciar para decodificar el próximo carácter
         }
     }
 
     // Asegurarse de imprimir el último carácter si es un nodo hoja
     if (nodoActual != raiz && nodoActual->izquierda == nullptr && nodoActual->derecha == nullptr) {
-        std::cout << nodoActual->dato;
-        return nodoActual->dato;
+        decodificado += nodoActual->dato;
     }
 
-    std::cout << std::endl;
+    decodificado += '\n';
+    return decodificado;
+}
+
+std::vector<NodoHuffman*> ArbolHuffman::obtenerNodosDelArbol(NodoHuffman* raiz) {
+    std::vector<NodoHuffman*> nodos;
+    obtenerNodosDelArbolAux(raiz, nodos);
+    return nodos;
+}
+
+// Función auxiliar para realizar el recorrido in-order y almacenar los nodos en el vector
+void ArbolHuffman::obtenerNodosDelArbolAux(NodoHuffman* nodo, std::vector<NodoHuffman*>& nodos) {
+    if (nodo == nullptr) 
+        return;
+    
+    // Llamada recursiva al hijo izquierdo
+    obtenerNodosDelArbolAux(nodo->izquierda, nodos);
+
+    // Almacenar el nodo actual en el vector
+    nodos.push_back(nodo);
+
+    // Llamada recursiva al hijo derecho
+    obtenerNodosDelArbolAux(nodo->derecha, nodos);
 }
